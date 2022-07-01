@@ -18,7 +18,7 @@ contract EvidenceFactory{
         return evidence;
     }
 
-    function getEvidence(address addr) public pure returns (string, string, uint8[], bytes32[], bytes32[], address[], address[]) {
+    function getEvidence(address addr) public view returns (string, string, uint8[], bytes32[], bytes32[], address[], address[]) {
         return Evidence(addr).getEvidence();
     }
 
