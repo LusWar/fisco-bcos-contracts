@@ -17,8 +17,7 @@ contract MeterRegisterInfoTable {
         tableFactory.createTable(TABLE_NAME, "meter_address", "meter_id, meter_info_hash");
     }
 
-    function register(string memory meter_address, string memory meter_id, string memory meter_info_hash) public returns (int256)
-    {
+    function register(string memory meter_address, string memory meter_id, string memory meter_info_hash) public returns (int256) {
         Table table = tableFactory.openTable(TABLE_NAME);
         require(table != address(0x0), "Table not exist");
 
@@ -30,8 +29,7 @@ contract MeterRegisterInfoTable {
         return count;
     }
 
-    function insert(string memory meter_address, string memory meter_id, string memory meter_info_hash) public returns (int256)
-    {
+    function insert(string memory meter_address, string memory meter_id, string memory meter_info_hash) public returns (int256) {
         Table table = tableFactory.openTable(TABLE_NAME);
         require(table != address(0x0), "Table not exist");
 
@@ -46,8 +44,7 @@ contract MeterRegisterInfoTable {
         return count;
     }
 
-    function select(string memory meter_address) public view returns (string[] memory, string[] memory, string[] memory)
-    {
+    function select(string memory meter_address) public view returns (string[] memory, string[] memory, string[] memory) {
         Table table = tableFactory.openTable(TABLE_NAME);
         require(table != address(0x0), "Table not exist");
 
@@ -75,8 +72,7 @@ contract MeterRegisterInfoTable {
         return (meter_address_bytes_list, meter_id_bytes_list, meter_info_hash_bytes_list);
     }
 
-    function update(string memory meter_address, string memory meter_id, string memory meter_info_hash) public returns (int256)
-    {
+    function update(string memory meter_address, string memory meter_id, string memory meter_info_hash) public returns (int256) {
         Table table = tableFactory.openTable(TABLE_NAME);
         require(table != address(0x0), "Table not exist");
 

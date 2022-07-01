@@ -17,8 +17,7 @@ contract DeveloperInfoTable {
         tableFactory.createTable(TABLE_NAME, "developer_address", "developer_id,developer_name");
     }
 
-    function insert(string memory developer_address, string memory developer_id, string memory developer_name) public returns (int256)
-    {
+    function insert(string memory developer_address, string memory developer_id, string memory developer_name) public returns (int256) {
         Table table = tableFactory.openTable(TABLE_NAME);
         require(table != address(0x0), "Table not exist");
 
@@ -33,8 +32,7 @@ contract DeveloperInfoTable {
         return count;
     }
 
-    function select(string memory developer_address) public view returns (string[] memory, string[] memory, string[] memory)
-    {
+    function select(string memory developer_address) public view returns (string[] memory, string[] memory, string[] memory) {
         Table table = tableFactory.openTable(TABLE_NAME);
         require(table != address(0x0), "Table not exist");
 
@@ -62,8 +60,7 @@ contract DeveloperInfoTable {
         return (developer_address_bytes_list, developer_id_bytes_list, developer_name_bytes_list);
     }
 
-    function update(string memory developer_address, string memory developer_id, string memory developer_name) public returns (int256)
-    {
+    function update(string memory developer_address, string memory developer_id, string memory developer_name) public returns (int256) {
         Table table = tableFactory.openTable(TABLE_NAME);
         require(table != address(0x0), "Table not exist");
 
