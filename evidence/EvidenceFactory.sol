@@ -1,4 +1,4 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.25;
 import "./Evidence.sol";
 
 contract EvidenceFactory{
@@ -12,7 +12,7 @@ contract EvidenceFactory{
         }
     }
 
-    function newEvidence(string evi, string info, uint8 v, bytes32 r, bytes32, s) public returns (address) {
+    function newEvidence(string evi, string info, uint8 v, bytes32 r, bytes32 s) public returns (address) {
         Evidence evidence = new Evidence(evi, info, v, r, s, this);
         emit newEvidenceEvent(evidence);
         return evidence;
@@ -38,15 +38,8 @@ contract EvidenceFactory{
 
     function getSigner(uint index)public constant returns (address) {
         uint listSize = signers.length;
-        if(index < listSize)
-        {
-            return signers[index];
-        }
-        else
-        {
-            return 0;
-        }
-
+        require(index < listSize, "Wrong index");
+        return signers[index];
     }
 
     function getSignersSize() public constant returns (uint) {
