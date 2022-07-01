@@ -18,7 +18,7 @@ contract EvidenceFactory{
         return evidence;
     }
 
-    function getEvidence(address addr) public constant returns (string, string, uint8[], bytes32[], bytes32[], address[], address[]) {
+    function getEvidence(address addr) public pure returns (string, string, uint8[], bytes32[], bytes32[], address[], address[]) {
         return Evidence(addr).getEvidence();
     }
 
@@ -26,7 +26,7 @@ contract EvidenceFactory{
         return Evidence(addr).addSignature(v, r, s);
     }
 
-    function verifySigner(address addr)public constant returns (bool) {
+    function verifySigner(address addr)public view returns (bool) {
         for(uint i = 0; i < signers.length; ++i) {
             if (addr == signers[i])
             {
@@ -36,17 +36,17 @@ contract EvidenceFactory{
         return false;
     }
 
-    function getSigner(uint index)public constant returns (address) {
+    function getSigner(uint index)public view returns (address) {
         uint listSize = signers.length;
         require(index < listSize, "Wrong index");
         return signers[index];
     }
 
-    function getSignersSize() public constant returns (uint) {
+    function getSignersSize() public view returns (uint) {
         return signers.length;
     }
 
-    function getSigners() public constant returns (address[]) {
+    function getSigners() public view returns (address[]) {
         return signers;
     }
 }

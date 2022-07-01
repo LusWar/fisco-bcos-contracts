@@ -21,7 +21,7 @@ contract Evidence{
     event newSignaturesEvent(string evi, string info, uint8 v, bytes32 r, bytes32 s, address addr);
     event addRepeatSignaturesEvent(string evi, string info, uint8 v, bytes32 r, bytes32 s);
 
-    function callVerify(address addr) public constant returns (bool) {
+    function callVerify(address addr) internal view returns (bool) {
         return EvidenceSignersDataABI(factoryAddr).verifySigner(addr);
     }
 
@@ -37,7 +37,7 @@ contract Evidence{
         emit newSignaturesEvent(evi, info, v, r, s, addr);
     }
 
-    function getEvidence() public constant returns (string, string, uint8[], bytes32[], bytes32[], address[], address[]) {
+    function getEvidence() public view returns (string, string, uint8[], bytes32[], bytes32[], address[], address[]) {
         uint length = EvidenceSignersDataABI(factoryAddr).getSignersSize();
         address[] memory signerList = new address[](length);
         for(uint i= 0 ;i<length ;i++)
