@@ -1,76 +1,27 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.25;
 import "./Evidence.sol";
 
 contract EvidenceFactory{
-        address[] signers;
-        
-        //advance to add logic about free key
-        mapping(string=>address) evi_key; 
-        
-        event newEvidenceEvent(address addr);
-		event newEvidenceEventWithKey(address addr, string key);
-		function newEvidence(string evi) public returns(address)
-		{
-		    Evidence evidence = new Evidence(evi, this);
-		    emit newEvidenceEvent(evidence);
-		    return evidence;
-		}
-        function newEvidenceByKey(string evi, string key) public returns(address)
-        {
-            Evidence evidence = new Evidence(evi, this);
-            emit newEvidenceEventWithKey(evidence, key); 
-            evi_key[key] = evidence;
-            return evidence;
-        }
-        
-        function getEvidenceByKey(string key) public constant returns(string,address[],address[]){ 
-            return getEvidence(evi_key[key]);
-        }
-        
-        function getEvidence(address addr) public constant returns(string,address[],address[]){
-            return Evidence(addr).getEvidence();
-        }
 
-                
-        function addSignatures(address addr) public returns(bool) {
-            return Evidence(addr).addSignatures();
-        }
-        
-        constructor(address[] evidenceSigners){
-            for(uint i=0; i<evidenceSigners.length; ++i) {
-                signers.push(evidenceSigners[i]);
-			}
-		}
+    event newEvidenceEvent(address addr);
 
-        function verify(address addr)public constant returns(bool){
-            for(uint i=0; i<signers.length; ++i) {
-                if (addr == signers[i])
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+    constructor(){}
 
-        function getSigner(uint index)public constant returns(address){
-            uint listSize = signers.length;
-            if(index < listSize)
-            {
-                return signers[index];
-            }
-            else
-            {
-                return 0;
-            }
-    
-        }
+    function newEvidence(string evi, string info, string id, uint8 v, bytes32 r, bytes32 s) public returns (address) {
+        Evidence evidence = new Evidence(evi, info, id, v, r, s, msg.sender, this);
+        emit newEvidenceEvent(evidence);
+        return evidence;
+    }
 
-        function getSignersSize() public constant returns(uint){
-            return signers.length;
-        }
-    
-        function getSigners() public constant returns(address[]){
-            return signers;
-        }
+    function getEvidence(address addr)
+    public view returns (string, string, string, uint8[], bytes32[], bytes32[], address[]) {
+        require(addr != address(0x0), "Invalid evidence address");
+        return Evidence(addr).getEvidence();
+    }
+
+    function addSignature(address addr, uint8 v, bytes32 r, bytes32 s) public returns (bool) {
+        require(addr != address(0x0), "Invalid evidence address");
+        return Evidence(addr).addSignature(v, r, s, msg.sender);
+    }
 
 }

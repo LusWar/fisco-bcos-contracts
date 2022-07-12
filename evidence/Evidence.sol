@@ -1,83 +1,59 @@
-pragma solidity ^0.4.4;
-
-contract EvidenceSignersDataABI
-{
-	function verify(address addr)public constant returns(bool){}
-	function getSigner(uint index)public constant returns(address){} 
-	function getSignersSize() public constant returns(uint){}
-}
+pragma solidity ^0.4.25;
 
 contract Evidence{
-    
+
     string evidence;
-    address[] signers;
+    string evidenceInfo;
+    string evidenceID;
+    uint8[] _v;
+    bytes32[] _r;
+    bytes32[] _s;
+    address[] evidenceSigners;
     address public factoryAddr;
-    
-    event addSignaturesEvent(string evi);
-    event newSignaturesEvent(string evi, address addr);
-    event errorNewSignaturesEvent(string evi, address addr);
-    event errorAddSignaturesEvent(string evi, address addr);
-    event addRepeatSignaturesEvent(string evi);
-    event errorRepeatSignaturesEvent(string evi, address addr);
 
-    function CallVerify(address addr) public constant returns(bool) {
-        return EvidenceSignersDataABI(factoryAddr).verify(addr);
+    event addSignaturesEvent(string evi, string info, string id, uint8 v, bytes32 r, bytes32 s, address signer);
+    event newSignaturesEvent(string evi, string info, string id, uint8 v, bytes32 r, bytes32 s, address signer);
+    event addRepeatSignaturesEvent(string evi, string info, string id, uint8 v, bytes32 r, bytes32 s, address signer);
+
+    constructor(string evi, string info, string id, uint8 v, bytes32 r, bytes32 s, address signer, address addr)  {
+        require(signer != address(0x0), "Invalid signer address");
+        require(addr != address(0x0), "Invalid factory address");
+        evidence = evi;
+        evidenceInfo = info;
+        evidenceID = id;
+        _v.push(v);
+        _r.push(r);
+        _s.push(s);
+        evidenceSigners.push(signer);
+        factoryAddr = addr;
+        emit newSignaturesEvent(evi, info, id, v, r, s, signer);
     }
 
-   constructor(string evi, address addr)  {
-       factoryAddr = addr;
-       if(CallVerify(tx.origin))
-       {
-           evidence = evi;
-           signers.push(tx.origin);
-           newSignaturesEvent(evi,addr);
-       }
-       else
-       {
-           errorNewSignaturesEvent(evi,addr);
-       }
+    function getEvidence() public view returns (string, string, string, uint8[], bytes32[], bytes32[], address[]) {
+        return(evidence, evidenceInfo, evidenceID, _v, _r, _s, evidenceSigners);
     }
 
-    function getEvidence() public constant returns(string,address[],address[]){
-        uint length = EvidenceSignersDataABI(factoryAddr).getSignersSize();
-         address[] memory signerList = new address[](length);
-         for(uint i= 0 ;i<length ;i++)
-         {
-             signerList[i] = (EvidenceSignersDataABI(factoryAddr).getSigner(i));
-         }
-        return(evidence,signerList,signers);
-    }
-
-    function addSignatures() public returns(bool) {
-        for(uint i= 0 ;i<signers.length ;i++)
+    function addSignature(uint8 v, bytes32 r, bytes32 s, address signer) public returns (bool) {
+        require(signer != address(0x0), "Invalid signer address");
+        for(uint i = 0; i < evidenceSigners.length; ++i)
         {
-            if(tx.origin == signers[i])
+            if(signer == evidenceSigners[i])
             {
-                addRepeatSignaturesEvent(evidence);
-                return true;
+                if(_v[i] == v && _r[i] == r && _s[i] == s) {
+                    emit addRepeatSignaturesEvent(evidence, evidenceInfo, evidenceID, v, r, s, signer);
+                    return true;
+                }
             }
         }
-       if(CallVerify(tx.origin))
-       {
-            signers.push(tx.origin);
-            addSignaturesEvent(evidence);
-            return true;
-       }
-       else
-       {
-           errorAddSignaturesEvent(evidence,tx.origin);
-           return false;
-       }
+        _v.push(v);
+        _r.push(r);
+        _s.push(s);
+        evidenceSigners.push(signer);
+        emit addSignaturesEvent(evidence, evidenceInfo, evidenceID, v, r, s, signer);
+        return true;
     }
-    
-    function getSigners()public constant returns(address[])
-    {
-         uint length = EvidenceSignersDataABI(factoryAddr).getSignersSize();
-         address[] memory signerList = new address[](length);
-         for(uint i= 0 ;i<length ;i++)
-         {
-             signerList[i] = (EvidenceSignersDataABI(factoryAddr).getSigner(i));
-         }
-         return signerList;
+
+    function getEvidenceSigners() public view returns (address[]) {
+        return evidenceSigners;
     }
 }
