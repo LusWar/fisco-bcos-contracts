@@ -1,18 +1,17 @@
 pragma solidity ^0.4.25;
 
 import "./BasicAuth.sol";
-import "./RewardPointController.sol";
+import "./RankingPointController.sol";
 import "./RewardPointData.sol";
 
-
-contract Admin is BasicAuth {
+contract RankingPointAdmin is BasicAuth {
     address public _dataAddress;
     address public _controllerAddress;
 
     constructor() public {
-        RewardPointData data = new RewardPointData("Point of V1");
+        RewardPointData data = new RewardPointData("Ranking Points");
         _dataAddress = address(data);
-        RewardPointController controller = new RewardPointController(_dataAddress);
+        RankingPointController controller = new RankingPointController(_dataAddress);
         _controllerAddress = address(controller);
         data.upgradeVersion(_controllerAddress);
         data.addIssuer(msg.sender);
